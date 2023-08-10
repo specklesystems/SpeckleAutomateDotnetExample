@@ -25,7 +25,7 @@ jobs:
           dotnet build
           echo $(dotnet run generate-schema) > ${{ env.FUNCTION_SCHEMA_PATH }}
       - name: Speckle Automate Function - Build and Publish
-        uses: specklesystems/speckle-automate-github-composite-action@0.3.0
+        uses: specklesystems/speckle-automate-github-composite-action@0.3.1
         with:
           speckle_automate_url: 'https://automate.speckle.dev'
           speckle_token: ${{ secrets.SPECKLE_FUNCTION_TOKEN }}
