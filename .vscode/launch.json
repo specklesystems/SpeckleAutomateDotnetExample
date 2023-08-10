@@ -14,7 +14,7 @@
       "args": [
         "{\"projectId\": \"03434ee1f1\", \"modelId\": \"base design\", \"versionId\": \"09d2a0e55a\", \"speckleServerUrl\": \"https://latest.speckle.systems\"}",
         "{\"speckleTypeToCount\": \"Base\"}",
-        "7e9d3a711fa422a0cfffd3f695f9024d3553016d3c"
+        "${env:SPECKLE_TOKEN}"
       ],
       "cwd": "${workspaceFolder}",
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console

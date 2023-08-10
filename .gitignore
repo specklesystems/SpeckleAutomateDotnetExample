@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/dotnetcore,linux,visualstudiocode,rider,visualstudio,windows,macos
 # Edit at https://www.toptal.com/developers/gitignore?templates=dotnetcore,linux,visualstudiocode,rider,visualstudio,windows,macos
 
+.env
+.envrc
+
 ### DotnetCore ###
 # .NET Core build folders
 bin/
