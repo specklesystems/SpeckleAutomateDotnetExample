@@ -6,6 +6,8 @@ on:
 
 jobs:
   publish-automate-function-version: # make sure the action works on a clean machine without building
+    env:
+      FUNCTION_SCHEMA_PATH: ./functionSchema.json
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.4.0
@@ -21,12 +23,12 @@ jobs:
         id: extract_schema
         run: |
           dotnet build
-          echo "function_input_schema=$(dotnet run generate-schema)" >> "$GITHUB_OUTPUT"
+          echo $(dotnet run generate-schema) > ${{ env.FUNCTION_SCHEMA_PATH }}
       - name: Speckle Automate Function - Build and Publish
-        uses: specklesystems/speckle-automate-github-composite-action@0.2.3
+        uses: specklesystems/speckle-automate-github-composite-action@0.3.0
         with:
           speckle_automate_url: 'https://automate.speckle.dev'
           speckle_token: ${{ secrets.SPECKLE_FUNCTION_TOKEN }}
           speckle_function_id: ${{ secrets.SPECKLE_FUNCTION_ID }}
-          speckle_function_input_schema: ${{ steps.extract_schema.outputs.function_input_schema }}
+          speckle_function_input_schema_file_path: ${{ env.FUNCTION_SCHEMA_PATH }}
           speckle_function_command: 'dotnet SpeckleAutomateDotnetExample.dll'
