@@ -19,6 +19,8 @@ jobs:
         run: dotnet restore --locked-mode
       - name: Extract functionInputSchema
         run: |
+          dotnet build
+          dotnet run generate-schema
           echo "function_input_schema=$(dotnet run generate-schema)" >> "$GITHUB_ENV"
       - name: Echo env
         run: echo "$GITHUB_ENV"
