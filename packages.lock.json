@@ -13,9 +13,9 @@
       },
       "Speckle.Core": {
         "type": "Direct",
-        "requested": "[2.15.2, )",
-        "resolved": "2.15.2",
-        "contentHash": "1cRak+/w5X2evkyMmWi0DTfgZ5PkwXFNR5XV8FSaWZUrV+Bnl8bQqaucLX8qj6YiEPj582tqoHUTBRa+8DD8cQ==",
+        "requested": "[2.15.3, )",
+        "resolved": "2.15.3",
+        "contentHash": "rL4g3mBgL2TYWw55wC9QqVe0mR1MUISfcuDhiDNfVoPiWMmvGD1UQ6PjU5MncQRvLXYow48KGrUMDl7nntlIAQ==",
         "dependencies": {
           "GraphQL.Client": "6.0.0",
           "Microsoft.CSharp": "4.7.0",
@@ -43,11 +43,11 @@
       },
       "Speckle.Objects": {
         "type": "Direct",
-        "requested": "[2.15.2, )",
-        "resolved": "2.15.2",
-        "contentHash": "Qg92EAMK59rWILYa4heGBN34tNGU61wEPp8xLOlNo5800Pea7guXm+IeylGxe1Vfsy+/Rt5f3WdHIXG9VpXu2g==",
+        "requested": "[2.15.3, )",
+        "resolved": "2.15.3",
+        "contentHash": "oj822fIHKIzevwZRYYZXmed/RNhf/WUX1DtKIxNQyGAhsPrMg6veke2Z5RuY6N3NtzC8NSJz4AyKhu/ESjVh2w==",
         "dependencies": {
-          "Speckle.Core": "2.15.2"
+          "Speckle.Core": "2.15.3"
         }
       },
       "System.CommandLine": {

@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json.Schema.Generation;
 using Newtonsoft.Json.Serialization;
-using Objects.Geometry;
 using Speckle.Newtonsoft.Json;
 
 namespace SpeckleAutomateDotnetExample;
@@ -57,14 +56,20 @@ internal static class Program
     string speckleToken
   )
   {
-    var p = new Point();
     var speckleProjectData = JsonConvert.DeserializeObject<SpeckleProjectData>(
       rawSpeckleProjectData
     );
     var functionInputs = JsonConvert.DeserializeObject<FunctionInputs>(
       rawFunctionInputs
     );
-    await AutomateFunction.Run(speckleProjectData, functionInputs, speckleToken);
+    var count = await AutomateFunction.Run(
+      speckleProjectData,
+      functionInputs,
+      speckleToken
+    );
+    Console.WriteLine(
+      $"Found {count} elements that have the type {functionInputs.SpeckleTypeToCount}"
+    );
   }
 
   static string GenerateFunctionInputSchema()

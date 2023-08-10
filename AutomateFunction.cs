@@ -1,6 +1,7 @@
+using Objects.Geometry;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
-using Speckle.Core.Models.GraphTraversal;
+using Speckle.Core.Models.Extensions;
 using Speckle.Core.Transports;
 using SpeckleAutomateDotnetExample;
 
@@ -20,7 +21,8 @@ class AutomateFunction
     var client = new Client(account);
 
 
-    // var kit = KitManager.GetDefaultKit();
+    // HACK needed for the objects kit to initialize
+    var p = new Point();
 
     var commit = await client.CommitGet(
       speckleProjectData.ProjectId,
@@ -34,13 +36,6 @@ class AutomateFunction
       new MemoryTransport()
     );
 
-    var traversalRule = TraversalRule
-      .NewTraversalRule()
-      .When(_ => true)
-      .ContinueTraversing(DefaultTraversal.ElementsAliases);
-    var gt = new GraphTraversal(traversalRule);
-    var ret = gt.Traverse(rootObject).Select(b => b.current).ToList();
-
-    return ret.Count( b => b.speckle_type == functionInputs.SpeckleTypeToCount);
+    return rootObject.Flatten().Count( b => b.speckle_type == functionInputs.SpeckleTypeToCount);
   }
 }
