@@ -18,16 +18,15 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore --locked-mode
       - name: Extract functionInputSchema
+        id: extract_schema
         run: |
           dotnet build
-          echo function_input_schema='$(dotnet run generate-schema)' >> "$GITHUB_ENV"
-      - name: Echo env
-        run: echo "$GITHUB_ENV"
+          echo "function_input_schema=$(dotnet run generate-schema)" >> "$GITHUB_OUTPUT"
       - name: Speckle Automate Function - Build and Publish
         uses: specklesystems/speckle-automate-github-composite-action@0.2.3
         with:
           speckle_automate_url: 'https://automate.speckle.dev'
           speckle_token: ${{ secrets.SPECKLE_FUNCTION_TOKEN }}
           speckle_function_id: ${{ secrets.SPECKLE_FUNCTION_ID }}
-          speckle_function_input_schema: ${{ env.function_input_schema }}
+          speckle_function_input_schema: ${{ steps.extract_schema.outputs.function_input_schema }}
           speckle_function_command: 'dotnet SpeckleAutomateDotnetExample.dll'
