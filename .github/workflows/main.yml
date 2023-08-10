@@ -24,7 +24,7 @@ jobs:
       - name: Echo env
         run: echo "$GITHUB_ENV"
       - name: Speckle Automate Function - Build and Publish
-        uses: specklesystems/speckle-automate-github-composite-action@0.2.1
+        uses: specklesystems/speckle-automate-github-composite-action@0.2.2
         with:
           speckle_automate_url: 'https://automate.speckle.dev'
           speckle_token: ${{ secrets.SPECKLE_FUNCTION_TOKEN }}
