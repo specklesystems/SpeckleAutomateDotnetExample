@@ -9,5 +9,3 @@ RUN dotnet publish --use-current-runtime --self-contained false --no-restore -o 
 FROM mcr.microsoft.com/dotnet/runtime:7.0 as runtime
 WORKDIR /publish
 COPY --from=build-env /publish .
-RUN ls /publish
-CMD ["dotnet", "SpeckleAutomateDotnetExample.dll"]

@@ -1,0 +1,32 @@
+name: 'build and deploy Speckle functions'
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish-automate-function-version: # make sure the action works on a clean machine without building
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.4.0
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v3.2.0
+        with:
+          dotnet-version: 7.x
+          cache: true
+
+      - name: Restore dependencies
+        run: dotnet restore --locked-mode
+      - name: Extract functionInputSchema
+        run: |
+          echo "function_input_schema=$(dotnet run generate-schema)" >> "$GITHUB_ENV"
+      - name: Echo env
+        run: echo "$GITHUB_ENV"
+      - name: Speckle Automate Function - Build and Publish
+        uses: specklesystems/speckle-automate-github-composite-action@0.2.1
+        with:
+          speckle_automate_url: 'https://automate.speckle.dev'
+          speckle_token: ${{ secrets.SPECKLE_AUTOMATE_FUNCTION_PUBLISH_TOKEN }}
+          speckle_function_id: ${{ secrets.SPECKLE_AUTOMATE_FUNCTION_ID }}
+          speckle_function_input_schema: ${{ env.function_input_schema }}
+          speckle_function_command: 'dotnet SpeckleAutomateDotnetExample.dll'
