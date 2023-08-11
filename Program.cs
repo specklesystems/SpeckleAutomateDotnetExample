@@ -1,10 +1,8 @@
 ﻿using System.CommandLine;
-using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json.Schema.Generation;
 using Newtonsoft.Json.Serialization;
 using Speckle.Newtonsoft.Json;
 
-namespace SpeckleAutomateDotnetExample;
 
 internal static class Program
 {
@@ -83,14 +81,6 @@ internal static class Program
   }
 }
 
-/// <summary>
-/// This class describes the user specified variables that the function wants to work with.
-/// </summary>
-class FunctionInputs
-{
-  [Required]
-  public string SpeckleTypeToCount;
-}
 
 internal class SpeckleProjectData
 {

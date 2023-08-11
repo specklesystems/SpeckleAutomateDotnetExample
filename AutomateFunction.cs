@@ -1,9 +1,20 @@
+using System.ComponentModel.DataAnnotations;
 using Objects.Geometry;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using Speckle.Core.Models.Extensions;
 using Speckle.Core.Transports;
-using SpeckleAutomateDotnetExample;
+
+/// <summary>
+/// This class describes the user specified variables that the function wants to work with.
+/// </summary>
+/// This class is used to generate a JSON Schema to ensure that the user provided values
+/// are valid and match the required schema.
+class FunctionInputs
+{
+  [Required]
+  public string SpeckleTypeToCount;
+}
 
 class AutomateFunction
 {
