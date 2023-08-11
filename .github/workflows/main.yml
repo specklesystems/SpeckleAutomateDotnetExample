@@ -23,13 +23,13 @@ jobs:
         id: extract_schema
         run: |
           dotnet build
-          echo $(dotnet run generate-schema) > ${{ env.FUNCTION_SCHEMA_PATH }}
-          cat ${{ env.FUNCTION_SCHEMA_PATH }}
+          echo $(dotnet run generate-schema) > functionSchema.json
+          cat functionSchema.json
       - name: Speckle Automate Function - Build and Publish
         uses: specklesystems/speckle-automate-github-composite-action@0.3.1
         with:
           speckle_automate_url: 'https://automate.speckle.dev'
           speckle_token: ${{ secrets.SPECKLE_FUNCTION_TOKEN }}
           speckle_function_id: ${{ secrets.SPECKLE_FUNCTION_ID }}
-          speckle_function_input_schema_file_path: ${{ env.FUNCTION_SCHEMA_PATH }}
+          speckle_function_input_schema_file_path: functionSchema.json
           speckle_function_command: 'dotnet SpeckleAutomateDotnetExample.dll'
