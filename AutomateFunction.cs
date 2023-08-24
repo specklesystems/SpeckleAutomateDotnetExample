@@ -48,6 +48,7 @@ class AutomateFunction
     );
 
     Console.WriteLine("Hello Gergö!!!");
+    throw new Exception("I am a nasty exception");
 
     return rootObject.Flatten().Count( b => b.speckle_type == functionInputs.SpeckleTypeToCount);
   }
