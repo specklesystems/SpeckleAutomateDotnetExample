@@ -47,8 +47,8 @@ class AutomateFunction
       new MemoryTransport()
     );
 
-    Console.WriteLine("Hello Gergö");
-    
+    Console.WriteLine("Hello Gergö!!!");
+
     return rootObject.Flatten().Count( b => b.speckle_type == functionInputs.SpeckleTypeToCount);
   }
 }
