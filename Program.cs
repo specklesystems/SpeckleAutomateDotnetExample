@@ -1,7 +1,7 @@
-﻿using System.CommandLine;
-using Newtonsoft.Json.Schema.Generation;
+﻿using Newtonsoft.Json.Schema.Generation;
 using Newtonsoft.Json.Serialization;
 using Speckle.Newtonsoft.Json;
+using System.CommandLine;
 
 
 internal static class Program
@@ -22,15 +22,13 @@ internal static class Program
     );
     var rootCommand = new RootCommand("Count objects matching the given speckle_type");
     rootCommand.AddArgument(speckleProjectDataArg);
-    rootCommand.AddArgument(functionInputsArg);
     rootCommand.AddArgument(speckleTokenArg);
     rootCommand.SetHandler(
-      async (speckleProjectData, functionInputs, speckleToken) =>
+      async (speckleProjectData, speckleToken) =>
       {
-        await RunFunction(speckleProjectData, functionInputs, speckleToken);
+        await RunFunction(speckleProjectData, speckleToken);
       },
       speckleProjectDataArg,
-      functionInputsArg,
       speckleTokenArg
     );
 
@@ -50,23 +48,15 @@ internal static class Program
 
   static async Task RunFunction(
     string rawSpeckleProjectData,
-    string rawFunctionInputs,
     string speckleToken
   )
   {
     var speckleProjectData = JsonConvert.DeserializeObject<SpeckleProjectData>(
       rawSpeckleProjectData
     );
-    var functionInputs = JsonConvert.DeserializeObject<FunctionInputs>(
-      rawFunctionInputs
-    );
     var count = await AutomateFunction.Run(
       speckleProjectData,
-      functionInputs,
       speckleToken
-    );
-    Console.WriteLine(
-      $"Found {count} elements that have the type {functionInputs.SpeckleTypeToCount}"
     );
   }
 
