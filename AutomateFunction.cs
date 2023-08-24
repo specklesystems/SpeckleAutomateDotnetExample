@@ -13,8 +13,6 @@ using System.ComponentModel.DataAnnotations;
 /// are valid and match the required schema.
 class FunctionInputs
 {
-  [Required]
-  public string SpeckleTypeToCount;
 }
 
 class AutomateFunction
