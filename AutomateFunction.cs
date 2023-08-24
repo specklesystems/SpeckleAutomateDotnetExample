@@ -1,9 +1,10 @@
-using System.ComponentModel.DataAnnotations;
-using Objects.Geometry;
+﻿using Objects.Geometry;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
+using Speckle.Core.Models;
 using Speckle.Core.Models.Extensions;
 using Speckle.Core.Transports;
+using System.ComponentModel.DataAnnotations;
 
 /// <summary>
 /// This class describes the user specified variables that the function wants to work with.
@@ -18,9 +19,8 @@ class FunctionInputs
 
 class AutomateFunction
 {
-  public static async Task<int> Run(
+  public static async Task<string> Run(
     SpeckleProjectData speckleProjectData,
-    FunctionInputs functionInputs,
     string speckleToken
   )
   {
@@ -31,22 +31,12 @@ class AutomateFunction
     };
     var client = new Client(account);
 
+    var streamId = await client.StreamCreate(new StreamCreateInput { description = "Speckle Automate is Awesome ⭐", name = "Automated Stream" });
+    var data = new Base();
+    data["matteos-prop"] = "zis iz a test";
+    var commitId = await Helpers.Send(streamId, data, "I'M A BOT", "automate");
 
-    // HACK needed for the objects kit to initialize
-    var p = new Point();
 
-    var commit = await client.CommitGet(
-      speckleProjectData.ProjectId,
-      speckleProjectData.VersionId
-    );
-
-    var serverTransport = new ServerTransport(account, speckleProjectData.ProjectId);
-    var rootObject = await Operations.Receive(
-      commit.referencedObject,
-      serverTransport,
-      new MemoryTransport()
-    );
-
-    return rootObject.Flatten().Count( b => b.speckle_type == functionInputs.SpeckleTypeToCount);
+    return $"{speckleProjectData.SpeckleServerUrl}/streams/{streamId}/commits/{commitId}";
   }
 }
