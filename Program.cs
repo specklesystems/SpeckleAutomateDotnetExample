@@ -57,16 +57,15 @@ internal static class Program
     var speckleProjectData = JsonConvert.DeserializeObject<SpeckleProjectData>(
       rawSpeckleProjectData
     );
+    // if (speckleProjectData is null) throw new ArgumentException("Invalid SpeckleProjectData received");
     var functionInputs = JsonConvert.DeserializeObject<FunctionInputs>(
       rawFunctionInputs
     );
-    var count = await AutomateFunction.Run(
+
+    await AutomateFunction.Run(
       speckleProjectData,
       functionInputs,
       speckleToken
-    );
-    Console.WriteLine(
-      $"Found {count} elements that have the type {functionInputs.SpeckleTypeToCount}"
     );
   }
 
@@ -82,7 +81,7 @@ internal static class Program
 }
 
 
-internal class SpeckleProjectData
+internal struct SpeckleProjectData
 {
   public string ProjectId;
   public string ModelId;
