@@ -12,4 +12,14 @@
     <PackageReference Include="Speckle.Objects" Version="2.17.0-automate" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove=".gitignore" />
+    <None Remove=".csharpierrc.json" />
+    <None Remove=".tool-versions" />
+    <None Remove="README.md" />
+    <None Remove="packages.lock.json" />
+    <None Remove="Dockerfile" />
+    <None Remove=".dockerignore" />
+  </ItemGroup>
+
 </Project>

@@ -9,13 +9,26 @@ static class AutomateFunction
     FunctionInputs functionInputs
   )
   {
+    Console.WriteLine("Starting execution");
     // HACK needed for the objects kit to initialize
     var p = new Point();
-
+    
+    Console.WriteLine("Receiving version");
     var commitObject = await automationContext.ReceiveVersion();
 
-    return commitObject
-      .Flatten()
-      .Count(b => b.speckle_type == functionInputs.SpeckleTypeToCount);
+    Console.WriteLine("Received version: " + commitObject);
+    try
+    {
+      var count = commitObject
+                 .Flatten()
+                 .Count(b => b.speckle_type == functionInputs.SpeckleTypeToCount);
+      Console.WriteLine($"Counted {count} objects");
+      return count;
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine($"An error occurred {e}");
+      return 0;
+    }
   }
 }
