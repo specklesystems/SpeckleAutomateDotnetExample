@@ -23,10 +23,10 @@ jobs:
         id: extract_schema
         run: |
           dotnet build
-          echo $(dotnet run generate-schema) > ${HOME}/functionSchema.json
+          dotnet run generate-schema ${HOME}/functionSchema.json
           cat ${HOME}/functionSchema.json
       - name: Speckle Automate Function - Build and Publish
-        uses: specklesystems/speckle-automate-github-composite-action@0.6.1
+        uses: specklesystems/speckle-automate-github-composite-action@0.4.2
         with:
           speckle_automate_url: "https://automate.speckle.dev"
           speckle_token: ${{ secrets.SPECKLE_FUNCTION_TOKEN }}
