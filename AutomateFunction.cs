@@ -1,55 +1,21 @@
-using System.ComponentModel.DataAnnotations;
 using Objects.Geometry;
-using Speckle.Core.Api;
-using Speckle.Core.Credentials;
+using Speckle.Automate.Sdk;
 using Speckle.Core.Models.Extensions;
-using Speckle.Core.Transports;
 
-/// <summary>
-/// This class describes the user specified variables that the function wants to work with.
-/// </summary>
-/// This class is used to generate a JSON Schema to ensure that the user provided values
-/// are valid and match the required schema.
-class FunctionInputs
-{
-  [Required]
-  public string SpeckleTypeToCount;
-}
-
-class AutomateFunction
+static class AutomateFunction
 {
   public static async Task<int> Run(
-    SpeckleProjectData speckleProjectData,
-    FunctionInputs functionInputs,
-    string speckleToken
+    AutomationContext automationContext,
+    FunctionInputs functionInputs
   )
   {
-    var account = new Account
-    {
-      token = speckleToken,
-      serverInfo = new ServerInfo() { url = speckleProjectData.SpeckleServerUrl }
-    };
-    var client = new Client(account);
-
-
     // HACK needed for the objects kit to initialize
     var p = new Point();
 
-    var commit = await client.CommitGet(
-      speckleProjectData.ProjectId,
-      speckleProjectData.VersionId
-    );
+    var commitObject = await automationContext.ReceiveVersion();
 
-    var serverTransport = new ServerTransport(account, speckleProjectData.ProjectId);
-    var rootObject = await Operations.Receive(
-      commit.referencedObject,
-      serverTransport,
-      new MemoryTransport()
-    );
-
-    Console.WriteLine("Hello Gergö!!!");
-    throw new Exception("I am a nasty exception");
-
-    return rootObject.Flatten().Count( b => b.speckle_type == functionInputs.SpeckleTypeToCount);
+    return commitObject
+      .Flatten()
+      .Count(b => b.speckle_type == functionInputs.SpeckleTypeToCount);
   }
 }

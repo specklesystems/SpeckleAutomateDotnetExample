@@ -1,3 +1,7 @@
 {
-  "dotnet.server.useOmnisharp": false
+  "dotnet.server.useOmnisharp": false,
+  "[csharp]": {
+    "editor.defaultFormatter": "csharpier.csharpier-vscode",
+    "editor.formatOnSave": true
+  }
 }
