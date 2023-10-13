@@ -7,7 +7,7 @@ on:
 jobs:
   publish-automate-function-version: # make sure the action works on a clean machine without building
     env:
-      FUNCTION_SCHEMA_PATH: ${HOME}/functionSchema.json
+      FUNCTION_SCHEMA_FILE_NAME: functionSchema.json
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.4.0
@@ -32,4 +32,4 @@ jobs:
           speckle_automate_url: ${{ env.SPECKLE_AUTOMATE_URL || 'https://automate.speckle.dev' }}
           speckle_token: ${{ secrets.SPECKLE_FUNCTION_TOKEN }}
           speckle_function_id: ${{ secrets.SPECKLE_FUNCTION_ID }}
-          speckle_function_input_schema_file_path: ${{ env.FUNCTION_SCHEMA_PATH }}
+          speckle_function_input_schema_file_path: ${{ env.FUNCTION_SCHEMA_FILE_NAME }}
