@@ -16,11 +16,11 @@ jobs:
         uses: actions/setup-dotnet@v3.2.0
         with:
           dotnet-version: 7.x
-
       - name: Restore dependencies
-        run: dotnet restore --locked-mode
+        run: dotnet restore
       - name: Extract functionInputSchema
         id: extract_schema
+        working-directory: "SpeckleAutomateDotnetExample"
         run: |
           dotnet build
           dotnet run generate-schema ${HOME}/functionSchema.json
