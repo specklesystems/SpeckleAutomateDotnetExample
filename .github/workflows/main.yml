@@ -8,6 +8,7 @@ jobs:
   publish-automate-function-version: # make sure the action works on a clean machine without building
     env:
       FUNCTION_SCHEMA_FILE_NAME: functionSchema.json
+      SPECKLE_AUTOMATE_URL: https://automate.speckle.dev
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.4.0
@@ -29,7 +30,7 @@ jobs:
         uses: specklesystems/speckle-automate-github-composite-action@0.6.7
         with:
           speckle_function_command: "dotnet SpeckleAutomateDotnetExample.dll"
-          speckle_automate_url: ${{ env.SPECKLE_AUTOMATE_URL || 'https://automate.speckle.dev' }}
+          speckle_automate_url: ${{ env.SPECKLE_AUTOMATE_URL }}
           speckle_token: ${{ secrets.SPECKLE_FUNCTION_TOKEN }}
           speckle_function_id: ${{ secrets.SPECKLE_FUNCTION_ID }}
           speckle_function_input_schema_file_path: ${{ env.FUNCTION_SCHEMA_FILE_NAME }}
