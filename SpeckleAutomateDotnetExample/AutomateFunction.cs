@@ -1,5 +1,7 @@
+using Objects;
 using Objects.Geometry;
 using Speckle.Automate.Sdk;
+using Speckle.Core.Logging;
 using Speckle.Core.Models.Extensions;
 
 static class AutomateFunction
@@ -10,8 +12,8 @@ static class AutomateFunction
   )
   {
     Console.WriteLine("Starting execution");
-    // HACK needed for the objects kit to initialize
-    var p = new Point();
+    // INFO: Force objects kit to initialize
+    _ = nameof(ObjectsKit);
     
     Console.WriteLine("Receiving version");
     var commitObject = await automationContext.ReceiveVersion();
