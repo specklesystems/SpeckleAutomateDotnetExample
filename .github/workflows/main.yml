@@ -1,4 +1,4 @@
-name: 'build and deploy Speckle functions'
+name: "build and deploy Speckle functions"
 on:
   push:
     branches:
@@ -7,7 +7,8 @@ on:
 jobs:
   publish-automate-function-version: # make sure the action works on a clean machine without building
     env:
-      FUNCTION_SCHEMA_PATH: ${HOME}/functionSchema.json
+      FUNCTION_SCHEMA_FILE_NAME: functionSchema.json
+      SPECKLE_AUTOMATE_URL: https://automate.speckle.dev
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.4.0
@@ -15,21 +16,20 @@ jobs:
         uses: actions/setup-dotnet@v3.2.0
         with:
           dotnet-version: 7.x
-          cache: true
-
       - name: Restore dependencies
-        run: dotnet restore --locked-mode
+        run: dotnet restore
       - name: Extract functionInputSchema
         id: extract_schema
+        working-directory: "SpeckleAutomateDotnetExample"
         run: |
           dotnet build
-          echo $(dotnet run generate-schema) > ${HOME}/functionSchema.json
+          dotnet run generate-schema ${HOME}/functionSchema.json
           cat ${HOME}/functionSchema.json
       - name: Speckle Automate Function - Build and Publish
-        uses: specklesystems/speckle-automate-github-composite-action@0.4.2
+        uses: specklesystems/speckle-automate-github-composite-action@0.6.7
         with:
-          speckle_automate_url: 'https://automate.speckle.dev'
+          speckle_function_command: "dotnet SpeckleAutomateDotnetExample.dll"
+          speckle_automate_url: ${{ env.SPECKLE_AUTOMATE_URL }}
           speckle_token: ${{ secrets.SPECKLE_FUNCTION_TOKEN }}
           speckle_function_id: ${{ secrets.SPECKLE_FUNCTION_ID }}
-          speckle_function_input_schema_file_path: functionSchema.json
-          speckle_function_command: 'dotnet SpeckleAutomateDotnetExample.dll'
+          speckle_function_input_schema_file_path: ${{ env.FUNCTION_SCHEMA_FILE_NAME }}
