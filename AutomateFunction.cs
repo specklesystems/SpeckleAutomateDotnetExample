@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Objects.Geometry;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
@@ -10,7 +10,7 @@ using Speckle.Core.Transports;
 /// </summary>
 /// This class is used to generate a JSON Schema to ensure that the user provided values
 /// are valid and match the required schema.
-struct FunctionInputs
+class FunctionInputs
 {
   [Required]
   public string SpeckleTypeToCount;
@@ -18,7 +18,7 @@ struct FunctionInputs
 
 class AutomateFunction
 {
-  public static async Task Run(
+  public static async Task<int> Run(
     SpeckleProjectData speckleProjectData,
     FunctionInputs functionInputs,
     string speckleToken
@@ -47,10 +47,6 @@ class AutomateFunction
       new MemoryTransport()
     );
 
-    var count = rootObject?.Flatten().Count( b => b.speckle_type == functionInputs.SpeckleTypeToCount);
-
-    Console.WriteLine(
-      $"Found {count} elements that have the type {functionInputs.SpeckleTypeToCount}"
-    );
+    return rootObject.Flatten().Count( b => b.speckle_type == functionInputs.SpeckleTypeToCount);
   }
 }
