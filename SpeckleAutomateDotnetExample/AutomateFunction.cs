@@ -12,8 +12,8 @@ static class AutomateFunction
   )
   {
     Console.WriteLine("Starting execution");
-    // INFO: Force objects kit to initialize
-    _ = nameof(ObjectsKit);
+    _ = typeof(ObjectsKit).Assembly; // INFO: Force objects kit to initialize
+
     
     Console.WriteLine("Receiving version");
     var commitObject = await automationContext.ReceiveVersion();
