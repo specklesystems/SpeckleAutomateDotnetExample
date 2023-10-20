@@ -1,45 +1,47 @@
 # Example function for Speckle Automate
 
-This repository contains an example function, that is compatible with Speckle's automation platform.
+This repository contains an example function that is compatible with Speckle Automate, the platform to register and deploy automations that interact with your Speckle data.
+
+## Quick Start
+1. Download or clone this repository, or better still generate it via the New Function wizard in Speckle Automate.
+2. Modify the `AutomateFunction.cs` to include your specific logic.
+3. Publish your changes (see Publishing Functions).
 
 ## Getting started
 
-This is practically a template function, that can be used as a starter for creating your own function.
+This is essentially a template function, designed to serve as a starting point for creating your own function. The function targets dotnet 7.0 and uses the Speckle.Automate.SDK NuGet package, as well as the Objects Kit.
 
-The function targets dotnet 7.0 and uses the Speckle.Automate.SDK nuget package, as well as the Objects Kit.
+At its core every Speckle Automate function is a CLI application with a specific, standardized set of available commands and arguments (see below). Each automate function is then built into a Docker image and published onto Speckle Automate.
 
-At it's core, a Speckle Automate function is a CLI application with a specific, standardized set of available commands and arguments (see below). Each automate function is then built into a docker image that is published onto Speckle Automate.
-
-The entire publishing process is already taken care of (see Publishing functions below) so you can concentrate on writing the code that matters to you.
+The Speckle Automate function publishing process is already taken care of (see Publishing functions below) so you can concentrate on writing the code that matters to you.
 
 ### Repo structure
 
-Within this repo, you will find:
+Here are some key files and folders you'll find in this repository::
 
-- `SpeckleAutomateDotnetExample.sln` -> The main solution for the function. Only holds a reference to one project.
-- `SpeckleAutomateDotnetExample/` -> Sub-folder containing the function's project and code (all the code you'll need/want to modify lives here 🙌🏼)
-- **Docker related files** (`.dockerignore`, `Dockerfile`) -> Used for deployment of your function. Only modify if you know what you're doing.
-- **Github Action** (`.github/workflows/main.yml`) -> Used to publish the function on every release
-- **Codespaces configuration** (`.devcontainer/`) -> Preconfigures GitHub Codespaces to run this project.
-- **IDE Configuration** (`.vscode/`, `.csharpierrc.json`) -> Contains all necessary settings to get started writing a function in VSCode. Feel free to modify these files at will
+- **Main Solution File (`SpeckleAutomateDotnetExample.sln`)**: This is the project's master file that references the function's project. See note at the end of this readme about renaming this.
+- **Project Sub-folder (`SpeckleAutomateDotnetExample/`)**: This is where your function's code lives. Expand or replace the code in this sub-folder to make the function your own.
+- **Docker related files (`.dockerignore`, `Dockerfile`)** -> Files like `.dockerignore` and `Dockerfile` are essential for deploying your function as a Docker container. Modify these only if you're familiar with Docker and it is absolutely necessary for your function's operation.
+- **Github Action (`.github/workflows/main.yml`)** -> This action automates the function's release process, making it easier to publish updates.
+- **Codespaces configuration (`.devcontainer/`)** -> This configuration ensures that GitHub Codespaces has the settings it needs to run this project effectively.
+- **IDE Configuration Files (`.vscode/`, `.csharpierrc.json`)** -> Configuration files for Visual Studio Code are included, allowing you to tailor the editor settings to your preferences.
 
 ## Anatomy of a function
 
-At its core every Speckle automate function is a CLI application that gets its arguments from the execution context.
-Speckle Automate at its current stage provides 3 arguments to the functions it executes:
+Every Speckle Automate function is fundamentally a Command Line Interface (CLI) application that receives its operational context via arguments. Here's what Speckle Automate currently supplies to functions:
 
-1. A stringified JSON object, containing the references to the project, model, version and server url, which triggered the run of the given function run.
-2. Another stringified JSON object, that contains the user provided arguments to the function. Defining the schema of the required arguments is the responsibility of the function author. Speckle automate will make sure, that the automation user inputs match the published schema.
-3. A Speckle token that the function can use to act on behalf of the automation owner.
+1. **Project Context (Stringified JSON)**: This argument contains key data points such as the project, model, version, and server URL that initiated the function's execution.
+2. **User-Defined Arguments (Stringified JSON)**: The function author is responsible for defining the schema for these user inputs. Speckle Automate ensures that the provided inputs match this schema.
+3. **Speckle Token**: This token allows the function to perform actions as if it were the automation's owner.
 
-These arguments are automatically provided by the automate platform every time an automation is run. Additionally, the complexity of parsing the inputs is already dealt with in the `Speckle.Automate.Sdk`, which provides a convenient `AutomationRunner` class that is intended to be used as the entrypoint for any function.
+These arguments are automatically provided by the automate platform every time an automation is run. The `Speckle.Automate.Sdk` simplifies parsing these inputs via its `AutomationRunner` class, intended to be the function's entry point.
 
-### Program.cs - Function boilerplate
+### Function Boilerplate (`Program.cs`)
 
-In the `Program.cs` file you'll find only a call to `AutomationRunner.Main<TInput>` (the SDK entrypoint for our functions). This method contains the parsing logic for the previously mentioned arguments and takes in:
+In this file, you'll find a call to `AutomationRunner.Main<TInput>`, which serves as your function's SDK entry point. This method handles argument parsing and accepts:
 
-- `args` -> the arguments provided by automate
-- `Func<AutomationContext, TInput>` -> The user provided function that will be run when this automation is triggered.
+- `args` -> the arguments provided by Speckle Automate, and
+- `Func<AutomationContext, TInput>` -> Your custom function that gets executed when the automation is triggered.
 
 > If your function requires no inputs, there is also `AutomationRunner.Main` (non-generic) which takes in a `Func<AutomationContext>` instead.
 
@@ -48,47 +50,51 @@ This sets up a CLI application with two commands:
 1. the main function command, that implements the Speckle Automate function's anatomy
 2. `generate-schema` -> a helper command that can generate the JSON Schema from the function author provided `FunctionInputs` class. This command is called whenever a new version of the function is published to automate.
 
-### AutomateFunction.cs - The function implementation
+### Function Implementation (`AutomateFunction.cs`)
 
 The `AutomateFunction.cs` contains the actual function implementation. This is the file that you should modify to implement the function's functionality.
 
-The `Run` function takes 2 inputs:
+You'll modify the `Run` function to execute your specific logic here. The function receives an AutomationContext and, optionally, a struct for your desired input data:
 
 - `AutomationContext` -> The context of your automation, which contains all the parsed information provided by the automate service as explained [above](#anatomy-of-a-function)
-- **Optional** A `struct` representing your desired input data (see [Function Inputs](#functioninputscs---the-function-inputs))
+- **Optional**: a `struct` representing your desired input data (see [Function Inputs](#functioninputscs---the-function-inputs))
 
 The template already contains an example implementation that will count how many objects of a particular type can be found on a version.
 
-### FunctionInputs.cs - The function inputs
+### User Inputs (`FunctionInputs.cs`)
 
 The definition of the user-defined inputs required for the function to work. This will also be used by the `generate-schema` CLI command to inform Automate of the required inputs a user setting up an automation will need to provide.
 
-This is just a `struct` with whatever properties you need. For now, we support basic types (string, int, double) and nested `struct`s with the same type limitations as its parent.
+This `struct` defines the user input types your function will accept. Supported data types include basic ones (e.g., `string`, `int`, `double`) and nested structs are possible with the same types as their parents.
 
 ## Publishing a function
 
-We publish a [github action](https://github.com/specklesystems/speckle-automate-github-composite-action) that bundles all the steps that are needed to publish a new version of a function. The automation requires two secret values, the `SPECKLE_FUNCTION_ID` and `SPECKLE_FUNCTION_TOKEN` both of these are provided, when you register a new function on Automate.
+Publishing your Speckle Automate function is streamlined through a GitHub Action we provide. Here's what you need to know:
 
-This will:
+1. **Secret Values**: To start publishing, you'll need two secrets: `SPECKLE_FUNCTION_ID` and `SPECKLE_FUNCTION_TOKEN`. These are provided when you register a new function on Speckle Automate.
 
-- Restore any packages and build your function
-- Generate the json schema for your inputs
-- Package your function as a Docker image
-- Register the new image as a new version in Speckle Automate
+2. **Build and Restore**: The GitHub Action restores any necessary packages and builds your function.
+
+3. **Generate JSON Schema**: The Action will also generate a JSON schema based on your FunctionInputs class to inform Speckle Automate about the required user inputs.
+
+4. **Docker Image**: Your function is then packaged into a Docker image, which is essential for its deployment.
+
+5. **Version Registration**: The new Docker image is registered as a new version in Speckle Automate, making your function discoverable and usable.
+
 
 Once this process has successfully finished, your function should be available and discoverable in Speckle.Automate
 
 > [!NOTE]
-> You need to register your function on Speckle Automate to get the required secret values. For new functions, this is automatically done by our GitHub Application, so no extra user setup is needed.
+> Register your function on Speckle Automate to get the needed secret values. This is automatically done for new functions by our GitHub Application, so no extra setup is required on your end.
 
 > [!IMPORTANT]
 > After adding the Secrets to the repository secrets on Github each commit to the `main` branch will trigger the publication of a new version.
 
 ## Changing the name of your solution/project
 
-Ideally, one of the first things you'll want to do is to rename your project/solution to whatever fits your function's purpose best. If you decide to do so, please note there are several other places you may need to update the paths to match your new project structure/name.
+Before you dive too deeply into development, give your project a name that better suits its purpose. If you decide to rename your project or solution, remember also to update a few key areas to maintain functionality:
 
-- `Dockerfile` -> line 4 contains a reference to `SpeckleAutomateDotnetExample/` folder.
-- `.github/workflows/main.yml` -> line 23 sets the working directory to be `SpeckleAutomateDotnetFolder/`
+- **Dockerfile**: On line 4, you'll find a reference to the `SpeckleAutomateDotnetExample/` folder. Update this to match your new project name.
+- **GitHub Actions Workflow**: In `.github/workflows/main.yml`, the working directory for the GitHub Action is declared as `SpeckleAutomateDotnetFolder/`. Update this to point to your newly named project folder.
 
-Update these 2 locations too in order for the github action and docker to correctly find your newly named project.
+Keeping these references up-to-date ensures that GitHub Actions and Docker can correctly find and operate your project.
