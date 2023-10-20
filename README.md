@@ -17,7 +17,7 @@ The entire publishing process is already taken care of (see Publishing functions
 Within this repo, you will find:
 
 - `SpeckleAutomateDotnetExample.sln` -> The main solution for the function. Only holds a reference to one project.
-- `SpeckleAutomateDotnetExample/` -> Sub-folder containing the function's project and code
+- `SpeckleAutomateDotnetExample/` -> Sub-folder containing the function's project and code (all the code you'll need/want to modify lives here 🙌🏼)
 - **Docker related files** (`.dockerignore`, `Dockerfile`) -> Used for deployment of your function. Only modify if you know what you're doing.
 - **Github Action** (`.github/workflows/main.yml`) -> Used to publish the function on every release
 - **Codespaces configuration** (`.devcontainer/`) -> Preconfigures GitHub Codespaces to run this project.
@@ -41,23 +41,25 @@ In the `Program.cs` file you'll find only a call to `AutomationRunner.Main<TInpu
 - `args` -> the arguments provided by automate
 - `Func<AutomationContext, TInput>` -> The user provided function that will be run when this automation is triggered.
 
+> If your function requires no inputs, there is also `AutomationRunner.Main` (non-generic) which takes in a `Func<AutomationContext>` instead.
+
 This sets up a CLI application with two commands:
 
 1. the main function command, that implements the Speckle Automate function's anatomy
 2. `generate-schema` -> a helper command that can generate the JSON Schema from the function author provided `FunctionInputs` class. This command is called whenever a new version of the function is published to automate.
 
-### AutomateFunction.cs
+### AutomateFunction.cs - The function implementation
 
 The `AutomateFunction.cs` contains the actual function implementation. This is the file that you should modify to implement the function's functionality.
 
 The `Run` function takes 2 inputs:
 
 - `AutomationContext` -> The context of your automation, which contains all the parsed information provided by the automate service as explained [above](#anatomy-of-a-function)
-- **Optional** A `struct` representing your desired input data (see [Function Inputs](#functioninputscs))
+- **Optional** A `struct` representing your desired input data (see [Function Inputs](#functioninputscs---the-function-inputs))
 
 The template already contains an example implementation that will count how many objects of a particular type can be found on a version.
 
-### FunctionInputs.cs
+### FunctionInputs.cs - The function inputs
 
 The definition of the user-defined inputs required for the function to work. This will also be used by the `generate-schema` CLI command to inform Automate of the required inputs a user setting up an automation will need to provide.
 
@@ -81,3 +83,12 @@ Once this process has successfully finished, your function should be available a
 
 > [!IMPORTANT]
 > After adding the Secrets to the repository secrets on Github each commit to the `main` branch will trigger the publication of a new version.
+
+## Changing the name of your solution/project
+
+Ideally, one of the first things you'll want to do is to rename your project/solution to whatever fits your function's purpose best. If you decide to do so, please note there are several other places you may need to update the paths to match your new project structure/name.
+
+- `Dockerfile` -> line 4 contains a reference to `SpeckleAutomateDotnetExample/` folder.
+- `.github/workflows/main.yml` -> line 23 sets the working directory to be `SpeckleAutomateDotnetFolder/`
+
+Update these 2 locations too in order for the github action and docker to correctly find your newly named project.
