@@ -14,15 +14,16 @@ static class AutomateFunction
     Console.WriteLine("Starting execution");
     _ = typeof(ObjectsKit).Assembly; // INFO: Force objects kit to initialize
 
-    
     Console.WriteLine("Receiving version");
     var commitObject = await automationContext.ReceiveVersion();
 
     Console.WriteLine("Received version: " + commitObject);
 
     var count = commitObject
-               .Flatten()
-               .Count(b => b.speckle_type == functionInputs.SpeckleTypeToCount);
+      .Flatten()
+      .Count(b => b.speckle_type == functionInputs.SpeckleTypeToCount);
+
+    Console.WriteLine($"Counted {count} objects");
     automationContext.MarkRunSuccess($"Counted {count} objects");
   }
 }
