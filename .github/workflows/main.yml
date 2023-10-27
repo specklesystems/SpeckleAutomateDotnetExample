@@ -1,8 +1,9 @@
 name: "build and deploy Speckle functions"
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - main
+    tags:
+      - '*'
 
 jobs:
   publish-automate-function-version: # make sure the action works on a clean machine without building
