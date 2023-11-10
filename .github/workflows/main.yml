@@ -12,7 +12,7 @@ jobs:
       SPECKLE_AUTOMATE_URL: https://automate.speckle.dev
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.4.0
+      - uses: actions/checkout@v4.1.1
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v3.2.0
         with:
