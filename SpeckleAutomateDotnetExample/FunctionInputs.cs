@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 /// </summary>
 /// This class is used to generate a JSON Schema to ensure that the user provided values
 /// are valid and match the required schema.
-struct FunctionInputs
+public struct FunctionInputs
 {
   [Required]
   public string SpeckleTypeToCount;

@@ -1,17 +1,13 @@
+# nullable enable
 namespace TestAutomateFunction;
 
-public class AutomationContextTest
-{
-    
-}
-
 using Speckle.Automate.Sdk.Schema;
+using Speckle.Automate.Sdk;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using Speckle.Core.Models;
 using Speckle.Core.Transports;
-using TestsIntegration;
-using Utils = Speckle.Automate.Sdk.Tests.Integration.TestAutomateUtils;
+using Utils = TestAutomateUtils;
 
 [TestFixture]
 public sealed class AutomationContextTest : IDisposable
@@ -38,16 +34,16 @@ public sealed class AutomationContextTest : IDisposable
       }
     );
 
-    var automationName = Utils.RandomString(10);
-    var automationId = Utils.RandomString(10);
-    var automationRevisionId = Utils.RandomString(10);
+    var automationName = TestAutomateUtils.RandomString(10);
+    var automationId = TestAutomateUtils.RandomString(10);
+    var automationRevisionId = TestAutomateUtils.RandomString(10);
 
-    await Utils.RegisterNewAutomation(projectId, modelId, client, automationId, automationName, automationRevisionId);
+    await TestAutomateUtils.RegisterNewAutomation(projectId, modelId, client, automationId, automationName, automationRevisionId);
 
-    var automationRunId = Utils.RandomString(10);
-    var functionId = Utils.RandomString(10);
-    var functionName = "Automation name " + Utils.RandomString(10);
-    var functionRelease = Utils.RandomString(10);
+    var automationRunId = TestAutomateUtils.RandomString(10);
+    var functionId = TestAutomateUtils.RandomString(10);
+    var functionName = "Automation name " + TestAutomateUtils.RandomString(10);
+    var functionRelease = TestAutomateUtils.RandomString(10);
 
     return new AutomationRunData
     {
@@ -68,168 +64,44 @@ public sealed class AutomationContextTest : IDisposable
   private Client client;
   private Account account;
 
-  [OneTimeSetUp]
-  public async Task Setup()
+  private string GetSpeckleToken()
   {
-    account = await Fixtures.SeedUser().ConfigureAwait(false);
+    var envVarName = "SPECKLE_TOKEN";
+    var token = Environment.GetEnvironmentVariable(envVarName);
+    if (token is null)
+    {
+      throw new Exception($"Cannot run tests without a {envVarName} environment variable");
+    }
+
+    return token;
+  }
+
+  private string GetSpeckleServerUrl() =>
+    Environment.GetEnvironmentVariable("SPECKLE_SERVER_ULR") ?? "http://127.0.0.1:3000";
+
+  [OneTimeSetUp]
+  public void Setup()
+  {
+    account = new Account
+    {
+      token = GetSpeckleToken(),
+      serverInfo = new ServerInfo { url = GetSpeckleServerUrl()}
+    };
     client = new Client(account);
   }
 
   [Test]
   public async Task TestFunctionRun()
   {
-    var automationRunData = await AutomationRunData(Utils.TestObject());
+    var automationRunData = await AutomationRunData(TestAutomateUtils.TestObject());
     var automationContext = await AutomationRunner.RunFunction(
-      TestAutomateFunction.Run,
+      AutomateFunction.Run,
       automationRunData,
       account.token,
-      new TestFunctionInputs { ForbiddenSpeckleType = "Base" }
+      new FunctionInputs { SpeckleTypeToCount = "Base" }
     );
 
-    Assert.That(automationContext.RunStatus, Is.EqualTo("FAILED"));
-
-    var status = await AutomationStatusOperations.Get(
-      automationRunData.ProjectId,
-      automationRunData.ModelId,
-      automationContext.SpeckleClient
-    );
-
-    Assert.That(status.Status, Is.EqualTo(automationContext.RunStatus));
-    var statusMessage = status.AutomationRuns[0].FunctionRuns[0].StatusMessage;
-
-    Assert.That(statusMessage, Is.EqualTo(automationContext.AutomationResult.StatusMessage));
-  }
-
-  [Test]
-  public async Task TestFileUploads()
-  {
-    var automationRunData = await AutomationRunData(Utils.TestObject());
-    var automationContext = await AutomationContext.Initialize(automationRunData, account.token);
-
-    string filePath = $"./{Utils.RandomString(10)}";
-    await File.WriteAllTextAsync(filePath, "foobar");
-    try
-    {
-      await automationContext.StoreFileResult(filePath);
-    }
-    catch (Exception e)
-    {
-      Console.WriteLine(e);
-      throw;
-    }
-
-    File.Delete(filePath);
-    Assert.That(automationContext.AutomationResult.Blobs, Has.Count.EqualTo(1));
-  }
-
-  [Test]
-  public async Task TestCreateVersionInProject()
-  {
-    var automationRunData = await AutomationRunData(Utils.TestObject());
-    var automationContext = await AutomationContext.Initialize(automationRunData, account.token);
-
-    const string branchName = "test-branch";
-    const string commitMsg = "automation test";
-
-    await automationContext.CreateNewVersionInProject(Utils.TestObject(), branchName, commitMsg);
-
-    var branch = await automationContext.SpeckleClient
-      .BranchGet(automationRunData.ProjectId, branchName, 1)
-      .ConfigureAwait(false);
-
-    Assert.NotNull(branch);
-    Assert.That(branch.name, Is.EqualTo(branchName));
-    Assert.That(branch.commits.items[0].message, Is.EqualTo(commitMsg));
-  }
-
-  [Test]
-  public async Task TestCreateVersionInProject_ThrowsErrorForSameModel()
-  {
-    var automationRunData = await AutomationRunData(Utils.TestObject());
-    var automationContext = await AutomationContext.Initialize(automationRunData, account.token);
-
-    var branchName = automationRunData.BranchName;
-    const string commitMsg = "automation test";
-
-    Assert.ThrowsAsync<ArgumentException>(async () =>
-    {
-      await automationContext.CreateNewVersionInProject(Utils.TestObject(), branchName, commitMsg);
-    });
-  }
-
-  [Test]
-  public async Task TestSetContextView()
-  {
-    var automationRunData = await AutomationRunData(Utils.TestObject());
-    var automationContext = await AutomationContext.Initialize(automationRunData, account.token);
-
-    automationContext.SetContextView();
-
-    Assert.That(automationContext.AutomationResult.ResultView, Is.Not.Null);
-    string originModelView = $"{automationRunData.ModelId}@{automationRunData.VersionId}";
-    Assert.That(automationContext.AutomationResult.ResultView.EndsWith($"models/{originModelView}"), Is.True);
-
-    await automationContext.ReportRunStatus();
-    var dummyContext = "foo@bar";
-
-    automationContext.AutomationResult.ResultView = null;
-    automationContext.SetContextView(new List<string> { dummyContext }, true);
-
-    Assert.That(automationContext.AutomationResult.ResultView, Is.Not.Null);
-    Assert.That(
-      automationContext.AutomationResult.ResultView.EndsWith($"models/{originModelView},{dummyContext}"),
-      Is.True
-    );
-
-    await automationContext.ReportRunStatus();
-
-    automationContext.AutomationResult.ResultView = null;
-    automationContext.SetContextView(new List<string> { dummyContext }, false);
-
-    Assert.That(automationContext.AutomationResult.ResultView, Is.Not.Null);
-    Assert.That(automationContext.AutomationResult.ResultView.EndsWith($"models/{dummyContext}"), Is.True);
-
-    await automationContext.ReportRunStatus();
-
-    automationContext.AutomationResult.ResultView = null;
-
-    Assert.Throws<Exception>(() =>
-    {
-      automationContext.SetContextView(null, false);
-    });
-
-    await automationContext.ReportRunStatus();
-  }
-
-  [Test]
-  public async Task TestReportRunStatus_Succeeded()
-  {
-    var automationRunData = await AutomationRunData(Utils.TestObject());
-    var automationContext = await AutomationContext.Initialize(automationRunData, account.token);
-
-    Assert.That(automationContext.RunStatus, Is.EqualTo(AutomationStatusMapping.Get(Schema.AutomationStatus.Running)));
-
-    automationContext.MarkRunSuccess("This is a success message");
-
-    Assert.That(
-      automationContext.RunStatus,
-      Is.EqualTo(AutomationStatusMapping.Get(Schema.AutomationStatus.Succeeded))
-    );
-  }
-
-  [Test]
-  public async Task TestReportRunStatus_Failed()
-  {
-    var automationRunData = await AutomationRunData(Utils.TestObject());
-    var automationContext = await AutomationContext.Initialize(automationRunData, account.token);
-
-    Assert.That(automationContext.RunStatus, Is.EqualTo(AutomationStatusMapping.Get(Schema.AutomationStatus.Running)));
-
-    var message = "This is a failure message";
-    automationContext.MarkRunFailed(message);
-
-    Assert.That(automationContext.RunStatus, Is.EqualTo(AutomationStatusMapping.Get(Schema.AutomationStatus.Failed)));
-    Assert.That(automationContext.StatusMessage, Is.EqualTo(message));
+    Assert.That(automationContext.RunStatus, Is.EqualTo("SUCCEEDED"));
   }
 
   public void Dispose()
