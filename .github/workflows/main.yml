@@ -27,7 +27,7 @@ jobs:
           dotnet run generate-schema ${HOME}/functionSchema.json
           cat ${HOME}/functionSchema.json
       - name: Speckle Automate Function - Build and Publish
-        uses: specklesystems/speckle-automate-github-composite-action@0.7.2
+        uses: specklesystems/speckle-automate-github-composite-action@0.8.1
         with:
           speckle_function_command: "dotnet SpeckleAutomateDotnetExample.dll"
           speckle_automate_url: ${{ env.SPECKLE_AUTOMATE_URL }}
