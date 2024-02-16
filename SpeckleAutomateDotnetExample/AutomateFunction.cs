@@ -4,7 +4,7 @@ using Speckle.Automate.Sdk;
 using Speckle.Core.Logging;
 using Speckle.Core.Models.Extensions;
 
-static class AutomateFunction
+public static class AutomateFunction
 {
   public static async Task Run(
     AutomationContext automationContext,
