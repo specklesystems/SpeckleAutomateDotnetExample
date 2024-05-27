@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "speckleTypeToCount": {
+      "type": "string"
+    },
+    "speckleTypeTargetCount": {
+      "type": "integer",
+      "default": 10,
+      "minimum": 1.0,
+      "maximum": 100.0
+    },
+    "externalServiceKey": {
+      "type": "string",
+      "writeOnly": true
+    }
+  },
+  "required": [
+    "speckleTypeToCount",
+    "speckleTypeTargetCount",
+    "externalServiceKey"
+  ]
+}
