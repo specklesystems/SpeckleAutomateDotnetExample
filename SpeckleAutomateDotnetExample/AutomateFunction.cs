@@ -1,7 +1,5 @@
 using Objects;
-using Objects.Geometry;
 using Speckle.Automate.Sdk;
-using Speckle.Core.Logging;
 using Speckle.Core.Models.Extensions;
 
 public static class AutomateFunction
@@ -24,6 +22,12 @@ public static class AutomateFunction
       .Count(b => b.speckle_type == functionInputs.SpeckleTypeToCount);
 
     Console.WriteLine($"Counted {count} objects");
+
+    if (count < functionInputs.SpeckleTypeTargetCount) {
+      automationContext.MarkRunFailed($"Counted {count} objects where {functionInputs.SpeckleTypeTargetCount} were expected");
+      return;
+    }
+
     automationContext.MarkRunSuccess($"Counted {count} objects");
   }
 }
