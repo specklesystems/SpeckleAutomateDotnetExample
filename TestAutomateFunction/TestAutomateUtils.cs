@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using GraphQL;
+using Speckle.Automate.Sdk.Schema;
+using Speckle.Automate.Sdk.Schema.Triggers;
 using Speckle.Core.Api;
 using Speckle.Core.Models;
 
@@ -22,48 +24,50 @@ public static class TestAutomateUtils
     return rootObject;
   }
 
-  public static async Task RegisterNewAutomation(
-    string projectId,
-    string modelId,
-    Client speckleClient,
-    string automationId,
-    string automationName,
-    string automationRevisionId
-  )
-  {
-    GraphQLRequest query =
-      new(
-        query: """
-               mutation CreateAutomation(
-                   $projectId: String!
-                   $modelId: String!
-                   $automationName: String!
-                   $automationId: String!
-                   $automationRevisionId: String!
-               ) {
-                       automationMutations {
-                           create(
-                               input: {
-                                   projectId: $projectId
-                                   modelId: $modelId
-                                   automationName: $automationName
-                                   automationId: $automationId
-                                   automationRevisionId: $automationRevisionId
-                               }
-                           )
-                       }
-                   }
-               """,
-        variables: new
-        {
-          projectId,
-          modelId,
-          automationName,
-          automationId,
-          automationRevisionId,
-        }
-      );
+  public static async Task<AutomationRunData> CreateTestRun(
+    Client speckleClient
+  ) {
+        GraphQLRequest query =
+            new(
+                query: """
+                    mutation CreateTestAutomation(
+                        $automationId: ID!
+                    ) {
+                        projectAutomationMutations {
+                            createTestAutomationRun($automationId) {
+                                automationRunId
+                                functionRunId
+                                triggers {
+                                    payload {
+                                        modelId
+                                        versionId
+                                    }
+                                    triggerType
+                                }
+                            }
+                        }
+                    }
+                """,
+                variables: new
+                {
+                    automationId = TestAutomateEnvironment.GetSpeckleAutomationId()
+                }
+            );
 
-    await speckleClient.ExecuteGraphQLRequest<object>(query);
+        var res = await speckleClient.ExecuteGraphQLRequest<object>(query);
+
+        var data = new AutomationRunData()
+        {
+            ProjectId = TestAutomateEnvironment.GetSpeckleProjectId(),
+            SpeckleServerUrl = TestAutomateEnvironment.GetSpeckleServerUrl(),
+            AutomationId = TestAutomateEnvironment.GetSpeckleAutomationId(),
+            AutomationRunId = "",
+            FunctionRunId = "",
+            Triggers = new List<AutomationRunTriggerBase>() {
+                new VersionCreationTrigger(modelId: "", versionId: "")
+            }
+        };
+
+        return data;
   }
 }

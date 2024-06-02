@@ -58,4 +58,8 @@ public class TestAutomateEnvironment {
         return GetAppSettings()?.SpeckleAutomationId ?? GetEnvironmentVariable("SPECKLE_AUTOMATION_ID");
     }
 
+    public static void Clear() {
+        AppSettings = null;
+    }
+
 }
