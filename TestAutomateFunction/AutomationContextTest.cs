@@ -2,10 +2,11 @@
 namespace TestAutomateFunction;
 
 using Speckle.Automate.Sdk;
+using Speckle.Automate.Sdk.Test;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
-using Utils = TestAutomateUtils;
-using Env = TestAutomateEnvironment;
+// using Utils = TestAutomateUtils;
+// using Env = TestAutomateEnvironment;
 
 [TestFixture]
 public sealed class AutomationContextTest : IDisposable
@@ -19,8 +20,8 @@ public sealed class AutomationContextTest : IDisposable
   {
     account = new Account
     {
-      token = Env.GetSpeckleToken(),
-      serverInfo = new ServerInfo { url = Env.GetSpeckleServerUrl()}
+      token = TestAutomateEnvironment.GetSpeckleToken(),
+      serverInfo = new ServerInfo { url = TestAutomateEnvironment.GetSpeckleServerUrl().ToString() }
     };
     client = new Client(account);
   }
@@ -34,7 +35,7 @@ public sealed class AutomationContextTest : IDisposable
       SpeckleTypeTargetCount = 1
     };
 
-    var automationRunData = await Utils.CreateTestRun(client);
+    var automationRunData = await TestAutomateUtils.CreateTestRun(client);
     var automationContext = await AutomationRunner.RunFunction(
       AutomateFunction.Run,
       automationRunData,
@@ -48,6 +49,6 @@ public sealed class AutomationContextTest : IDisposable
   public void Dispose()
   {
     client.Dispose();
-    Env.Clear();
+    TestAutomateEnvironment.Clear();
   }
 }

@@ -14,8 +14,6 @@
         <PackageReference Include="NUnit3TestAdapter" Version="4.2.1"/>
         <PackageReference Include="NUnit.Analyzers" Version="3.3.0"/>
         <PackageReference Include="coverlet.collector" Version="3.1.2"/>
-        <PackageReference Include="Speckle.Automate.Sdk" Version="2.19.0" />
-        <PackageReference Include="Speckle.Objects" Version="2.19.0" />
     </ItemGroup>
 
     <ItemGroup>

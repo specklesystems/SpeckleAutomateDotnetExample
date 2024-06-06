@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Speckle.Automate.Sdk" Version="2.19.0" />
-    <PackageReference Include="Speckle.Objects" Version="2.19.0" />
+    <PackageReference Include="Speckle.Automate.Sdk" Version="2.19.1" />
+    <PackageReference Include="Speckle.Objects" Version="2.19.1" />
   </ItemGroup>
+
 </Project>
