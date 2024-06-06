@@ -1,12 +1,9 @@
-# nullable enable
 namespace TestAutomateFunction;
 
 using Speckle.Automate.Sdk;
 using Speckle.Automate.Sdk.Test;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
-// using Utils = TestAutomateUtils;
-// using Env = TestAutomateEnvironment;
 
 [TestFixture]
 public sealed class AutomationContextTest : IDisposable
