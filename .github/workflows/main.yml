@@ -9,7 +9,6 @@ jobs:
   publish-automate-function-version: # make sure the action works on a clean machine without building
     env:
       FUNCTION_SCHEMA_FILE_NAME: functionSchema.json
-      SPECKLE_AUTOMATE_URL: https://automate.speckle.dev
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.1
