@@ -3,6 +3,7 @@ namespace TestAutomateFunction;
 using Speckle.Automate.Sdk;
 using Speckle.Automate.Sdk.Test;
 using Speckle.Core.Api;
+using Speckle.Core.Api.GraphQL.Models;
 using Speckle.Core.Credentials;
 
 [TestFixture]
