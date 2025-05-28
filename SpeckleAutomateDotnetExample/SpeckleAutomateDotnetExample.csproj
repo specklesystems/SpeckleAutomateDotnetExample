@@ -10,7 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
 <!--    <PackageReference Include="Speckle.Automate.Sdk" Version="2.21.0" />-->
-    <ProjectReference Include="..\..\speckle-sharp-sdk\Speckle.Automate.Sdk\Speckle.Automate.Sdk.csproj"/>
+    <ProjectReference Include="..\..\speckle-sharp-sdk\src\Speckle.Automate.Sdk\Speckle.Automate.Sdk.csproj"/>
   </ItemGroup>
 
 </Project>

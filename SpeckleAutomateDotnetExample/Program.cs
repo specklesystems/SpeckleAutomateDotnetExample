@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Speckle.Automate.Sdk;
 
+//Boilerplate to setup Automate SDK
 var serviceCollection = new ServiceCollection();
 serviceCollection.AddAutomateSdk();
 serviceCollection.AddSingleton<AutomateFunction>();
