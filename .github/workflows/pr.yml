@@ -1,0 +1,19 @@
+name: "Test Building"
+on:
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.x.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        working-directory: "SpeckleAutomateDotnetExample"
+        run: |
+          dotnet build -warnaserror

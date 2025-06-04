@@ -1,16 +1,14 @@
-using Objects;
 using Speckle.Automate.Sdk;
-using Speckle.Core.Models.Extensions;
+using Speckle.Sdk.Models.Extensions;
 
-public static class AutomateFunction
+public class AutomateFunction
 {
-  public static async Task Run(
-    AutomationContext automationContext,
+  public async Task Run(
+    IAutomationContext automationContext,
     FunctionInputs functionInputs
   )
   {
     Console.WriteLine("Starting execution");
-    _ = typeof(ObjectsKit).Assembly; // INFO: Force objects kit to initialize
 
     Console.WriteLine("Receiving version");
     var commitObject = await automationContext.ReceiveVersion();
@@ -23,8 +21,11 @@ public static class AutomateFunction
 
     Console.WriteLine($"Counted {count} objects");
 
-    if (count < functionInputs.SpeckleTypeTargetCount) {
-      automationContext.MarkRunFailed($"Counted {count} objects where {functionInputs.SpeckleTypeTargetCount} were expected");
+    if (count < functionInputs.SpeckleTypeTargetCount)
+    {
+      automationContext.MarkRunFailed(
+        $"Counted {count} objects where {functionInputs.SpeckleTypeTargetCount} were expected"
+      );
       return;
     }
 

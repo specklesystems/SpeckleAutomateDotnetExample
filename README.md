@@ -33,7 +33,7 @@ This repository contains an example function that is compatible with Speckle Aut
 
 ## Getting started
 
-This is essentially a template function, designed to serve as a starting point for creating your own function. The function targets dotnet 7.0 and uses the Speckle.Automate.SDK NuGet package, as well as the Objects Kit.
+This is essentially a template function, designed to serve as a starting point for creating your own function. The function targets dotnet 8.0 and uses the Speckle.Automate.SDK NuGet package.
 
 At its core every Speckle Automate function is a CLI application with a specific, standardized set of available commands and arguments ([see below](#anatomy-of-a-function)). Each automate function is then built into a Docker image and published onto Speckle Automate.
 
@@ -62,13 +62,14 @@ These arguments are automatically provided by the automate platform every time a
 
 ### Function Boilerplate (`Program.cs`)
 
-In this file, you'll find a call to `AutomationRunner.Main<TInput>`, which serves as your function's SDK entry point. This method handles argument parsing and accepts:
+This Program.cs file is the entry point to your CLI app.
+It contains boilerplate to setup the Automate SDK services, Resolve your function, and run it via the call to `IAutomationRunner.Main<TInput>`. This method handles argument parsing and accepts:
 
 - `args` -> the arguments provided by Speckle Automate, and
 - `Func<AutomationContext, TInput>` -> Your custom function that gets executed when the automation is triggered.
 
 > [!NOTE]
-> If your function requires no inputs, there is also `AutomationRunner.Main` (non-generic) which takes in a `Func<AutomationContext>` instead.
+> If your function requires no inputs, there is also `IAutomationRunner.Main` (non-generic) which takes in a `Func<AutomationContext>` instead.
 
 This sets up a CLI application with two commands:
 
