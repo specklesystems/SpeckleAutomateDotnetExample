@@ -1,27 +1,35 @@
-namespace TestAutomateFunction;
-
+using Microsoft.Extensions.DependencyInjection;
 using Speckle.Automate.Sdk;
 using Speckle.Automate.Sdk.Test;
-using Speckle.Core.Api;
-using Speckle.Core.Api.GraphQL.Models;
-using Speckle.Core.Credentials;
+using Speckle.Sdk.Api;
+using Speckle.Sdk.Api.GraphQL.Models;
+using Speckle.Sdk.Credentials;
+
+namespace TestAutomateFunction;
 
 [TestFixture]
 public sealed class AutomationContextTest : IDisposable
 {
-
-  private Client client;
-  private Account account;
+  private IClient _client;
+  private Account _account;
+  private IAutomationRunner _runner;
+  private AutomateFunction _function;
 
   [OneTimeSetUp]
   public void Setup()
   {
-    account = new Account
+    var serviceProvider = ServiceRegistration.GetServiceProvider();
+    _account = new Account
     {
       token = TestAutomateEnvironment.GetSpeckleToken(),
-      serverInfo = new ServerInfo { url = TestAutomateEnvironment.GetSpeckleServerUrl().ToString() }
+      serverInfo = new ServerInfo
+      {
+        url = TestAutomateEnvironment.GetSpeckleServerUrl().ToString()
+      }
     };
-    client = new Client(account);
+    _client = serviceProvider.GetRequiredService<IClientFactory>().Create(_account);
+    _runner = serviceProvider.GetRequiredService<IAutomationRunner>();
+    _function = serviceProvider.GetRequiredService<AutomateFunction>();
   }
 
   [Test]
@@ -33,11 +41,11 @@ public sealed class AutomationContextTest : IDisposable
       SpeckleTypeTargetCount = 1
     };
 
-    var automationRunData = await TestAutomateUtils.CreateTestRun(client);
-    var automationContext = await AutomationRunner.RunFunction(
-      AutomateFunction.Run,
+    var automationRunData = await TestAutomateUtils.CreateTestRun(_client);
+    var automationContext = await _runner.RunFunction(
+      _function.Run,
       automationRunData,
-      account.token,
+      _account.token,
       inputs
     );
 
@@ -46,7 +54,7 @@ public sealed class AutomationContextTest : IDisposable
 
   public void Dispose()
   {
-    client.Dispose();
+    _client.Dispose();
     TestAutomateEnvironment.Clear();
   }
 }
