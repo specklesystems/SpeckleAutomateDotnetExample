@@ -11,9 +11,9 @@ jobs:
       FUNCTION_SCHEMA_FILE_NAME: functionSchema.json
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7.0.1
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6.0.0
         with:
           dotnet-version: 8.x.x
       - name: Restore dependencies
@@ -26,7 +26,7 @@ jobs:
           dotnet run generate-schema ${HOME}/functionSchema.json
           cat ${HOME}/functionSchema.json
       - name: Speckle Automate Function - Build and Publish
-        uses: specklesystems/speckle-automate-github-composite-action@0.9.0
+        uses: specklesystems/speckle-automate-github-composite-action@2026.6.0
         with:
           speckle_function_command: "dotnet SpeckleAutomateDotnetExample.dll"
           speckle_automate_url: ${{ env.SPECKLE_AUTOMATE_URL || vars.SPECKLE_AUTOMATE_URL || 'https://automate.speckle.dev' }}
